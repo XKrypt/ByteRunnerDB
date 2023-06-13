@@ -1,0 +1,38 @@
+# Arquivos gerados pelo CMake
+/build/
+/CMakeCache.txt
+/CMakeFiles/
+/CMakeScripts/
+/CMakeTmp/
+/CMakeLists.txt.user
+
+# Arquivos gerados pelo sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de build do Visual Studio
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.vcproj
+*.vcproj.*
+*.vcproj.user
+
+# Arquivos gerados pelos compiladores
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+
+# Arquivos de log e saída de execução
+*.log
+*.out
+
+# Outros arquivos temporários ou desnecessários
+*.tmp
+*.swp
+*.bak

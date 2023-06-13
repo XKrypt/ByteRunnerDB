@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG -rdynamic CMakeFiles/benchmark_tcp_libevent_server.dir/server.c.o -o ../../../bin/benchmark_tcp_libevent_server  -levent 

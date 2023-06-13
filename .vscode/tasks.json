@@ -1,0 +1,43 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"label": "build",
+		"type": "shell",
+		"command": "cmake --build . --config Release",
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"presentation": {
+		  "reveal": "always",
+		  "panel": "shared"
+		},
+		"problemMatcher": {
+		  "owner": "cpp",
+		  "fileLocation": ["relative", "${workspaceFolder}"],
+		  "pattern": {
+			"regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+			"file": 1,
+			"line": 2,
+			"column": 3,
+			"severity": 4,
+			"message": 5
+		  }
+		}
+	  },
+	  {
+		"label": "run",
+		"type": "shell",
+		"command": "./build/ByteRunnerDB",
+		"group": {
+		  "kind": "test",
+		  "isDefault": true
+		},
+		"presentation": {
+		  "reveal": "always",
+		  "panel": "shared"
+		}
+	  }
+	]
+  }

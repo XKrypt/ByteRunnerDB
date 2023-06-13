@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG -rdynamic CMakeFiles/benchmark_ioevent_libevent.dir/libevent_ioevent_bench.c.o -o ../../../bin/benchmark_ioevent_libevent  -levent 

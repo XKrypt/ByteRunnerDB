@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG -rdynamic CMakeFiles/benchmark_http_libevent.dir/libevent_http_bench.c.o -o ../../../bin/benchmark_http_libevent  -levent 

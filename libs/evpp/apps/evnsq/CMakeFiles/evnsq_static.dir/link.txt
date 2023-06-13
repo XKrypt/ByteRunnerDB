@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../lib/libevnsq_static.a CMakeFiles/evnsq_static.dir/client.cc.o CMakeFiles/evnsq_static.dir/command.cc.o CMakeFiles/evnsq_static.dir/consumer.cc.o CMakeFiles/evnsq_static.dir/nsq_conn.cc.o CMakeFiles/evnsq_static.dir/option.cc.o CMakeFiles/evnsq_static.dir/producer.cc.o
+/usr/bin/ranlib ../../lib/libevnsq_static.a
