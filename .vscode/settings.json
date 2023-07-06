@@ -76,6 +76,14 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.ipp": "cpp",
+        "bitset": "cpp",
+        "cppfs": "cpp",
+    },
+    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.default.customConfigurationVariables": {
+
+    
     }
 }

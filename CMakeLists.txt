@@ -10,19 +10,25 @@ set(CMAKE_CXX_STANDARD 11)
 if(NOT EXISTS "${CMAKE_BINARY_DIR}")
     file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}")
 endif()
-
+add_compile_options("-mavx" "-march=native")
 
 find_package(Mono REQUIRED)
 
-add_executable(ByteRunnerDB main.cpp) 
+add_executable(ByteRunnerDB main.cpp ) 
 # Defina o diretório de saída para os arquivos da biblioteca
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 
 
 #Biliotecas
-target_include_directories(ByteRunnerDB PRIVATE "libs/nlhoman")
-target_include_directories(ByteRunnerDB PRIVATE "byterunner_libs/")
+add_subdirectory("byterunner_libs/database_runner")
+add_subdirectory("libs/cppfs")
+target_include_directories(ByteRunnerDB PUBLIC "libs/nlhoman")
+target_include_directories(ByteRunnerDB PUBLIC "libs/uuid_v4")
+
+target_include_directories(DatabaseRunner PUBLIC "libs/nlhoman")
+target_include_directories(DatabaseRunner PUBLIC "libs/uuid_v4")
+
 
 # Adicione a biblioteca ao seu projeto
 add_library(evpp SHARED IMPORTED)
@@ -43,3 +49,5 @@ add_custom_command(TARGET ByteRunnerDB POST_BUILD
 
 target_link_libraries(ByteRunnerDB PUBLIC Mono::Mono)
 target_link_libraries(ByteRunnerDB PUBLIC evpp)
+target_link_libraries(ByteRunnerDB PUBLIC DatabaseRunner)
+
