@@ -1,0 +1,3 @@
+[submodule "libs/cppfs"]
+	path = libs/cppfs
+	url = https://github.com/cginternals/cppfs
