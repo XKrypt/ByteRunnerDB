@@ -21,7 +21,7 @@ using json = nlohmann::json;
 
 
 
-DatabaseFileManager::DatabaseFileManager(std::string projectFolder)
+DatabaseFileManager::DatabaseFileManager(std::string &projectFolder)
 {
     cppfs::FileHandle folder = cppfs::fs::open(projectFolder);
 

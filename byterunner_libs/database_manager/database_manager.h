@@ -5,18 +5,18 @@
 #include <iostream>
 #include "storage/storage.h"
 
-
 class DatabaseManager
 {
 private:
     std::string projectFolder;
-    DatabaseFileManager databaseFileManager;
-   
+    DatabaseFileManager *databaseFileManager;
+
 public:
-    DatabaseManager(std::string projectFolder);
+    DatabaseManager(std::string &projectFolder);
     ~DatabaseManager();
 
-    bool WriteNewDocument();
+    bool writeNewDocument();
+    static void createProject(std::string &folder, std::string &projectName);
 };
 
 #endif

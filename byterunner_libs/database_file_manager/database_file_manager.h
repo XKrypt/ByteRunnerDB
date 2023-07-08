@@ -25,7 +25,7 @@ private:
     
 
 public:
-    DatabaseFileManager(std::string projectFolder);
+    DatabaseFileManager(std::string &projectFolder);
     ~DatabaseFileManager();
     void createStorage(std::string &name, std::string &rules);
     bool ModifyDocument(std::string &id, std::string &filePath, std::string &newData);
