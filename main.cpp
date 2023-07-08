@@ -3,30 +3,39 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-config.h>
 #include <fstream>
-#include "byterunner_libs/database_runner/database_runner.h"
+#include "byterunner_libs/database_file_manager/database_file_manager.h"
+#include "uuid_v4.h"
+#include <random>
 
-bool fileExists(const std::string &filename)
-{
-    std::ifstream file(filename);
-    return file.good();
-}
 
 int main()
-{
+{   
+    UUIDv4::UUIDGenerator<std::mt19937_64> uuid_generate;
+    UUIDv4::UUID uuid = uuid_generate.getUUID();
+    std::string uuidStr = uuid.str();
+
     std::string folder = "ProjectFolder/";
-    DatabaseRunner* database = new DatabaseRunner(folder);
-    std::string test = "fewfewfew";
+    DatabaseFileManager* database = new DatabaseFileManager(folder);
+    std::string test = "fewfewfewfeewfwfwf";
     std::string testFile = "fewfewfew.byte";
-    database->writeToDatabaseFile(test,testFile);
+    database->writeToDatabaseFile(test,testFile,uuidStr);
     std::string storageName = "My_Storage";
     std::string storageRules = "";
     database->createStorage(storageName, storageRules);
 
-    std::string id = "1811d15d-55f4-425b-8a3e-122bd097ca6a";
-    if(!database->ModifySegment(id, testFile)){
-        std::cout << "error" << std::endl;
+    
+    std::string data =  database->readDocument(uuidStr,testFile);
+
+    std::cout  << "Data :" << data <<  std::endl;
+    std::string newData = "NEEEWWW DATA";
+  if(!database->ModifyDocument(uuidStr, testFile, newData)){
+        std::cout << "Error modifing." << std::endl;
+    }
+
+    if (!database->DeleteDocument(uuidStr,testFile))
+    {
+        std::cout << "Error on deleting." << std::endl;
     }
     
-
     return 0;
 }

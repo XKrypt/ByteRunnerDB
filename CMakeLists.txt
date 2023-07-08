@@ -15,19 +15,26 @@ add_compile_options("-mavx" "-march=native")
 find_package(Mono REQUIRED)
 
 add_executable(ByteRunnerDB main.cpp ) 
+
+
+target_compile_features(ByteRunnerDB PRIVATE cxx_std_17)
 # Defina o diretório de saída para os arquivos da biblioteca
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 
 
 #Biliotecas
-add_subdirectory("byterunner_libs/database_runner")
+add_subdirectory("byterunner_libs/database_file_manager")
+add_subdirectory("byterunner_libs/database_manager")
 add_subdirectory("libs/cppfs")
 target_include_directories(ByteRunnerDB PUBLIC "libs/nlhoman")
 target_include_directories(ByteRunnerDB PUBLIC "libs/uuid_v4")
 
-target_include_directories(DatabaseRunner PUBLIC "libs/nlhoman")
-target_include_directories(DatabaseRunner PUBLIC "libs/uuid_v4")
+target_include_directories(DatabaseFileManager PUBLIC "libs/nlhoman")
+target_include_directories(DatabaseFileManager PUBLIC "libs/uuid_v4")
+
+target_include_directories(DatabaseManager PUBLIC "libs/nlhoman")
+target_include_directories(DatabaseManager PUBLIC "libs/uuid_v4")
 
 
 # Adicione a biblioteca ao seu projeto
@@ -49,5 +56,6 @@ add_custom_command(TARGET ByteRunnerDB POST_BUILD
 
 target_link_libraries(ByteRunnerDB PUBLIC Mono::Mono)
 target_link_libraries(ByteRunnerDB PUBLIC evpp)
-target_link_libraries(ByteRunnerDB PUBLIC DatabaseRunner)
+target_link_libraries(ByteRunnerDB PUBLIC DatabaseFileManager)
+target_link_libraries(ByteRunnerDB PUBLIC DatabaseManager)
 
