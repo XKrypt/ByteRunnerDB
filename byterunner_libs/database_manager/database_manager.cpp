@@ -7,6 +7,8 @@
 
 DatabaseManager::DatabaseManager(std::string &projectFolder)
 {
+
+    //Loads project folder
     this->projectFolder = projectFolder;
     DatabaseFileManager manager(projectFolder);
     this->databaseFileManager = &manager;
@@ -18,14 +20,19 @@ DatabaseManager::~DatabaseManager()
 
 void DatabaseManager::createProject(std::string &folder, std::string &projectName)
 {
+
+    //Folder of project
     cppfs::FileHandle folderToPutProject = cppfs::fs::open(folder);
 
+
+    
     if (!folderToPutProject.exists())
     {
         std::cout << "Folder \"" << folder << "\" is not found" << std::endl;
         return;
     }
 
+    //Create project folder
     cppfs::FilePath path(folder + "/" + projectName);
     std::string folderPath = path.path();
     cppfs::FileHandle projectFolder = cppfs::fs::open(folderPath);
@@ -35,6 +42,8 @@ void DatabaseManager::createProject(std::string &folder, std::string &projectNam
         projectFolder.createDirectory();
     }
 
+
+    //Create configurations
     json config;
 
     config["project-name"] = projectName;
@@ -46,11 +55,14 @@ void DatabaseManager::createProject(std::string &folder, std::string &projectNam
          {"scripts", "scripts/"}}};
 
     config["global-scripts"] = "global/scripts/";
+
+    //Project configurations
     cppfs::FilePath projectFilePath(folderPath + "/" + "runner-project.json");
     std::ofstream projectConfigs(projectFilePath.path());
 
-    projectConfigs << config.dump(4);
 
+    //Indentations
+    projectConfigs << config.dump(4);
     projectConfigs.close();
 
 

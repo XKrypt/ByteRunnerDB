@@ -10,7 +10,9 @@ class Storage
 private:
    std::string storageName;
    std::string storageFile;
-   json configs;
+   std::string storageFolder;
+   std::string storageScripts;
+   json rules;
 public:
     Storage();
     ~Storage();

@@ -3,38 +3,44 @@ project(ByteRunnerDB)
 
 set(CMAKE_BINARY_DIR "${CMAKE_SOURCE_DIR}/build")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/finds_cmake")
-set(CMAKE_TOOLCHAIN_FILE "/home/fhayha/vcpkg/scripts/buildsystems/vcpkg.cmake")
+set(CMAKE_TOOLCHAIN_FILE "${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 set(CMAKE_CXX_STANDARD 11)
-
+find_package(Mono REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem)
 # Verifica se o diretório de build existe e, se não, cria-o
 if(NOT EXISTS "${CMAKE_BINARY_DIR}")
     file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}")
 endif()
 add_compile_options("-mavx" "-march=native")
+set(MONO_INCLUDE_DIRS "/usr/include/mono-2.0/mono")
 
-find_package(Mono REQUIRED)
+
 
 add_executable(ByteRunnerDB main.cpp ) 
-
 
 target_compile_features(ByteRunnerDB PRIVATE cxx_std_17)
 # Defina o diretório de saída para os arquivos da biblioteca
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
-
-
 #Biliotecas
 add_subdirectory("byterunner_libs/database_file_manager")
 add_subdirectory("byterunner_libs/database_manager")
+add_subdirectory("byterunner_libs/csharp_handle")
+add_subdirectory("byterunner_libs/cli")
 add_subdirectory("libs/cppfs")
 target_include_directories(ByteRunnerDB PUBLIC "libs/nlhoman")
 target_include_directories(ByteRunnerDB PUBLIC "libs/uuid_v4")
+target_include_directories(ByteRunnerDB PUBLIC "libs/cli11")
 
 target_include_directories(DatabaseFileManager PUBLIC "libs/nlhoman")
 target_include_directories(DatabaseFileManager PUBLIC "libs/uuid_v4")
 
 target_include_directories(DatabaseManager PUBLIC "libs/nlhoman")
 target_include_directories(DatabaseManager PUBLIC "libs/uuid_v4")
+
+
+target_include_directories(CSharpHandle PUBLIC "libs/nlhoman")
+target_include_directories(CSharpHandle PUBLIC "libs/rapidxml")
 
 
 # Adicione a biblioteca ao seu projeto
@@ -53,9 +59,10 @@ add_custom_command(TARGET ByteRunnerDB POST_BUILD
     /usr/local/lib/libevpp.so ${CMAKE_CURRENT_BINARY_DIR}/libevpp.so)
 
 
-
 target_link_libraries(ByteRunnerDB PUBLIC Mono::Mono)
+target_link_libraries(ByteRunnerDB PUBLIC CSharpHandle)
 target_link_libraries(ByteRunnerDB PUBLIC evpp)
 target_link_libraries(ByteRunnerDB PUBLIC DatabaseFileManager)
 target_link_libraries(ByteRunnerDB PUBLIC DatabaseManager)
-
+target_link_libraries(ByteRunnerDB PUBLIC Boost::filesystem)
+target_link_libraries(ByteRunnerDB PUBLIC CliRunner)

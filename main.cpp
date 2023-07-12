@@ -7,42 +7,28 @@
 #include "byterunner_libs/database_manager/database_manager.h"
 #include "uuid_v4.h"
 #include <random>
-
-int main()
+#include <filesystem>
+#include "CLI11.hpp"
+#include "byterunner_libs/cli/cli.h"
+int main(int argc, char** argv)
 {   
-    UUIDv4::UUIDGenerator<std::mt19937_64> uuid_generate;
-    UUIDv4::UUID uuid = uuid_generate.getUUID();
-    std::string uuidStr = uuid.str();
-    
-    std::string folder = "ProjectFolder/";
-    DatabaseFileManager* database = new DatabaseFileManager(folder);
-    std::string test = "fewfewfewfeewfwfwf";
-    std::string testFile = "fewfewfew.byte";
-    database->writeToDatabaseFile(test,testFile,uuidStr);
-    std::string storageName = "My_Storage";
-    std::string storageRules = "";
-    database->createStorage(storageName, storageRules);
+        // Inicialize o ambiente Mono
+    mono_set_dirs("/lib", "/etc");
+    mono_config_parse("/etc/mono/config");
+    MonoDomain *domain = mono_jit_init("projectName");
+        // Libere os recursos
+    mono_jit_cleanup(domain);
+    CLI::App app{"ByteRunnerDB"};
 
-    
-    std::string data =  database->readDocument(uuidStr,testFile);
 
-    std::cout  << "Data :" << data <<  std::endl;
-    std::string newData = "NEEEWWW DATA";
-  if(!database->ModifyDocument(uuidStr, testFile, newData)){
-        std::cout << "Error modifing." << std::endl;
+    std::string projectName;
+    app.add_option("-n, --new",projectName,"Cria um novo projeto");
+
+    CLI11_PARSE(app,argc,argv);
+
+    if(!projectName.empty()){
+        CliRunner::createProject(projectName);
     }
-
-    if (!database->DeleteDocument(uuidStr,testFile))
-    {
-        std::cout << "Error on deleting." << std::endl;
-    }
-
-    std::string projectFolder = "/home/fhayha";
-    std::string projectName = "Teste";
-    DatabaseManager::createProject(projectFolder, projectName);
-
-
-    
     
     return 0;
 }
