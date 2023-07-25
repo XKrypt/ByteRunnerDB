@@ -10,25 +10,27 @@
 #include <filesystem>
 #include "CLI11.hpp"
 #include "byterunner_libs/cli/cli.h"
+#include "byterunner_libs/runner_gui/runner_gui.h"
 int main(int argc, char** argv)
 {   
-        // Inicialize o ambiente Mono
-    mono_set_dirs("/lib", "/etc");
-    mono_config_parse("/etc/mono/config");
-    MonoDomain *domain = mono_jit_init("projectName");
-        // Libere os recursos
-    mono_jit_cleanup(domain);
+    LoadWindow();
+
     CLI::App app{"ByteRunnerDB"};
 
 
     std::string projectName;
+    bool runDevProject;
     app.add_option("-n, --new",projectName,"Cria um novo projeto");
+    app.add_flag("-r, --run-dev",runDevProject,"Roda um projeto em modo de desenvolvimento");
 
     CLI11_PARSE(app,argc,argv);
 
     if(!projectName.empty()){
         CliRunner::createProject(projectName);
     }
-    
+    if(runDevProject){
+        CliRunner::runDevProject();
+    }
+   
     return 0;
 }

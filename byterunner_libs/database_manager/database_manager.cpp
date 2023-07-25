@@ -4,14 +4,12 @@
 #include "cppfs/FileHandle.h"
 #include "../../libs/nlhoman/json.hpp"
 #include <iostream>
-
-DatabaseManager::DatabaseManager(std::string &projectFolder)
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+DatabaseManager::DatabaseManager()
 {
-
-    //Loads project folder
-    this->projectFolder = projectFolder;
-    DatabaseFileManager manager(projectFolder);
-    this->databaseFileManager = &manager;
+    std::string currentPath = fs::current_path().string();
+    this->projectFolder = currentPath;
 }
 
 DatabaseManager::~DatabaseManager()
@@ -21,18 +19,16 @@ DatabaseManager::~DatabaseManager()
 void DatabaseManager::createProject(std::string &folder, std::string &projectName)
 {
 
-    //Folder of project
+    // Folder of project
     cppfs::FileHandle folderToPutProject = cppfs::fs::open(folder);
 
-
-    
     if (!folderToPutProject.exists())
     {
         std::cout << "Folder \"" << folder << "\" is not found" << std::endl;
         return;
     }
 
-    //Create project folder
+    // Create project folder
     cppfs::FilePath path(folder + "/" + projectName);
     std::string folderPath = path.path();
     cppfs::FileHandle projectFolder = cppfs::fs::open(folderPath);
@@ -42,12 +38,11 @@ void DatabaseManager::createProject(std::string &folder, std::string &projectNam
         projectFolder.createDirectory();
     }
 
-
-    //Create configurations
+    // Create configurations
     json config;
 
     config["project-name"] = projectName;
-    config["port"] = "4848";
+    config["port"] = 4848;
     config["storages"] = {
         {{"name", "default"},
          {"folder", "default"},
@@ -56,17 +51,15 @@ void DatabaseManager::createProject(std::string &folder, std::string &projectNam
 
     config["global-scripts"] = "global/scripts/";
 
-    //Project configurations
+    // Project configurations
     cppfs::FilePath projectFilePath(folderPath + "/" + "runner-project.json");
     std::ofstream projectConfigs(projectFilePath.path());
 
-
-    //Indentations
+    // Indentations
     projectConfigs << config.dump(4);
     projectConfigs.close();
 
-
-    //TODO: create a function to automate this code block
+    // TODO: create a function to automate this code block
     cppfs::FilePath storageDefaultPath(folderPath + "/" + "default/");
     cppfs::FileHandle storageDefault = cppfs::fs::open(storageDefaultPath.path());
     storageDefault.createDirectory();

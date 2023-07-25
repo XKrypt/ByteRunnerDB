@@ -6,7 +6,6 @@
 #include <cppfs/FileHandle.h>
 #include <cppfs/FilePath.h>
 #include "uuid/uuid.h"
-#include "endianness.h"
 #include <iostream>
 #include <vector>
 #include <bitset>
@@ -25,7 +24,7 @@ private:
     
 
 public:
-    DatabaseFileManager(std::string &projectFolder);
+    DatabaseFileManager();
     ~DatabaseFileManager();
     void createStorage(std::string &name, std::string &rules);
     bool ModifyDocument(std::string &id, std::string &filePath, std::string &newData);

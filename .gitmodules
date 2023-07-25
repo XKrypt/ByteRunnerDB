@@ -1,3 +1,6 @@
 [submodule "libs/cppfs"]
 	path = libs/cppfs
 	url = https://github.com/cginternals/cppfs
+[submodule "libs/efsw"]
+	path = libs/efsw
+	url = https://github.com/SpartanJ/efsw

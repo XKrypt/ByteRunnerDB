@@ -14,16 +14,14 @@
 #include <sys/stat.h>
 #include <json.hpp>
 #include <cstdint>
-
-
+#include <boost/filesystem.hpp>
 using json = nlohmann::json;
-
-
-
-
-DatabaseFileManager::DatabaseFileManager(std::string &projectFolder)
+namespace fs = boost::filesystem;
+DatabaseFileManager::DatabaseFileManager()
 {
-    cppfs::FileHandle folder = cppfs::fs::open(projectFolder);
+    std::string currentPath = fs::current_path().string();
+    this->projectFolder = currentPath;
+    cppfs::FileHandle folder = cppfs::fs::open(this->projectFolder);
 
     if (folder.exists() && folder.isDirectory())
     {
@@ -129,7 +127,7 @@ bool DatabaseFileManager::ModifyDocument(std::string &id, std::string &filePath,
 
             std::ofstream outputFile(this->projectFolder + filePath + ".temp", std::ios::app);
             std::streampos i = 0;
-            while ( i < fileSize )
+            while (i < fileSize)
             {
                 if (i == currentPosition)
                 {
@@ -138,7 +136,7 @@ bool DatabaseFileManager::ModifyDocument(std::string &id, std::string &filePath,
                     outputFile.write((char *)&dataSizeBytes, sizeof(dataSizeBytes));
                     outputFile.write((char *)&idBytes, sizeof(idBytes));
                     outputFile.write((char *)&dataBytes, sizeof(dataBytes));
-                    i+= sizeOfData + sizeOfId + 8;
+                    i += sizeOfData + sizeOfId + 8;
                     continue;
                 }
                 char byte[1];
@@ -153,7 +151,7 @@ bool DatabaseFileManager::ModifyDocument(std::string &id, std::string &filePath,
             outputFile.close();
             dbFile.close();
 
-            cppfs::FileHandle oldFile = cppfs::fs::open(this->projectFolder + filePath); 
+            cppfs::FileHandle oldFile = cppfs::fs::open(this->projectFolder + filePath);
             cppfs::FileHandle newFile = cppfs::fs::open(this->projectFolder + filePath + ".temp");
 
             oldFile.remove();
@@ -205,15 +203,14 @@ bool DatabaseFileManager::DeleteDocument(std::string &id, std::string &filePath)
 
         if (strcmp(id.c_str(), idString.c_str()) == 0)
         {
-            
 
             std::ofstream outputFile(this->projectFolder + filePath + ".temp", std::ios::app);
             std::streampos i = 0;
-            while ( i < fileSize )
+            while (i < fileSize)
             {
                 if (i == currentPosition)
                 {
-                    i+= sizeOfData + sizeOfId + 8;
+                    i += sizeOfData + sizeOfId + 8;
                     continue;
                 }
                 char byte[1];
@@ -228,7 +225,7 @@ bool DatabaseFileManager::DeleteDocument(std::string &id, std::string &filePath)
             outputFile.close();
             dbFile.close();
 
-            cppfs::FileHandle oldFile = cppfs::fs::open(this->projectFolder + filePath); 
+            cppfs::FileHandle oldFile = cppfs::fs::open(this->projectFolder + filePath);
             cppfs::FileHandle newFile = cppfs::fs::open(this->projectFolder + filePath + ".temp");
 
             oldFile.remove();
@@ -291,7 +288,6 @@ std::string DatabaseFileManager::readDocument(std::string &id, std::string &file
             dbFile.close();
 
             return data;
-            
         }
 
         currentPosition += sizeOfData + sizeOfId + 8;

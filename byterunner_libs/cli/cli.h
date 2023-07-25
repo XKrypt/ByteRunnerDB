@@ -4,6 +4,8 @@
 namespace CliRunner
 {
     void createProject(std::string &projectName);
+    void runDevProject();
+    std::string getCurrentRunningFolder();
 } // namespace CliRunner
 
 #endif

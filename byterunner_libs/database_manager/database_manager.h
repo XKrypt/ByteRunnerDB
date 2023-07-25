@@ -9,10 +9,10 @@ class DatabaseManager
 {
 private:
     std::string projectFolder;
-    DatabaseFileManager *databaseFileManager;
+    DatabaseFileManager databaseFileManager;
 
 public:
-    DatabaseManager(std::string &projectFolder);
+    DatabaseManager();
     ~DatabaseManager();
 
     bool writeNewDocument();
