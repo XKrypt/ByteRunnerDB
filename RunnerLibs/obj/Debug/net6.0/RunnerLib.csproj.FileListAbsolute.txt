@@ -1,0 +1,12 @@
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/bin/Debug/net6.0/RunnerLib.deps.json
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/bin/Debug/net6.0/RunnerLib.dll
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/bin/Debug/net6.0/RunnerLib.pdb
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/RunnerLib.csproj.AssemblyReference.cache
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/RunnerLib.GeneratedMSBuildEditorConfig.editorconfig
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/RunnerLib.AssemblyInfoInputs.cache
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/RunnerLib.AssemblyInfo.cs
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/RunnerLib.csproj.CoreCompileInputs.cache
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/RunnerLib.dll
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/refint/RunnerLib.dll
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/RunnerLib.pdb
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/ref/RunnerLib.dll

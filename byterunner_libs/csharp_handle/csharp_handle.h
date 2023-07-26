@@ -40,13 +40,16 @@ namespace CSharpHandle
     void LoadClasses();
 
   public:
+    std::unordered_map<std::string, MonoAssembly*> thirdPartyAssembles;
     ProjectEnvironment();
     ~ProjectEnvironment();
     void StartWatch();
 
     std::vector<MonoObject *> RunMethodFromBehaviours(std::string &methodName, void **args, int paramsCount);
+    MonoObject *CreateClassInstance(const char *className, const char *classNamespace, MonoAssembly *assembly);
     void AddInternalMethod(const char *name, const void *method);
     MonoDomain *GetDomain();
+    MonoAssembly *GetProjectAssemble();
   };
 
   void generateScriptProject(std::string &projectFolder, std::string &projectName);

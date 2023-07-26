@@ -57,6 +57,32 @@ void CSharpHandle::ProjectEnvironment::AddInternalMethod(const char *name, const
     mono_add_internal_call(name, method);
 }
 
+MonoObject *CSharpHandle::ProjectEnvironment::CreateClassInstance(const char *className, const char *classNamespace, MonoAssembly *assembly)
+{
+    
+    MonoImage *image = mono_assembly_get_image(assembly);
+   
+    if (image == nullptr)
+    {
+        std::cout << "image is null" << std::endl;
+        return nullptr;
+    }
+
+    MonoClass *klass = mono_class_from_name(image,classNamespace, className);
+
+    if (klass == nullptr)
+    {
+        std::cout << "Erro ao carregar a classe" << std::endl;
+        return nullptr;
+    }
+    return mono_object_new(mono_domain_get(), klass);
+}
+
+MonoAssembly *CSharpHandle::ProjectEnvironment::GetProjectAssemble()
+{
+    return projectAssembly;
+}
+
 void CSharpHandle::ProjectEnvironment::StartWatch()
 {
 
@@ -100,6 +126,10 @@ void CSharpHandle::ProjectEnvironment::CompileScripts()
     {
         std::cout << "Erro de compilação" << std::endl;
     }
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
 }
 
 void CSharpHandle::ProjectEnvironment::LoadClasses()
@@ -136,9 +166,16 @@ void CSharpHandle::ProjectEnvironment::LoadClasses()
         if (superClassName == "RunnerBehaviour")
         {
             this->runnerBehaviours.push_back(klass);
+
+            std::string className(mono_class_get_name(klass));
+            std::cout << std::endl;
+            std::cout << std::endl;
+            std::cout << "Class: " << className << " -> add to runner" << std::endl;
+            std::cout << std::endl;
+            std::cout << std::endl;
         }
     }
-    std::cout << "Loaded " << runnerBehaviours.size() << "classes" << std::endl;
+    std::cout << "Loaded " << runnerBehaviours.size() << " behaviours" << std::endl;
 }
 
 MonoDomain *CSharpHandle::ProjectEnvironment::GetDomain()
@@ -186,7 +223,6 @@ std::vector<MonoObject *> CSharpHandle::ProjectEnvironment::RunMethodFromBehavio
 
                 // Get exception stack
                 char *exceptionStack = mono_debug_print_stack_frame(method, 0, projectDomain);
-
                 // Get method address
                 uint32_t addrs = mono_method_get_token(method);
 
@@ -207,6 +243,14 @@ std::vector<MonoObject *> CSharpHandle::ProjectEnvironment::RunMethodFromBehavio
                 else
                 {
                     std::cout << "Error loading MonoDebugSourceLocation" << std::endl;
+
+                    std::cout << std::endl;
+                    std::cout << "-------------" << std::endl;
+
+                    std::cout << "RuntimeException : " << exceptionClassName << std::endl;
+
+                    std::cout << "--------------" << std::endl;
+                    std::cout << std::endl;
                 }
             }
             else
@@ -236,7 +280,8 @@ void CSharpHandle::ProjectEnvironment::LoadAssembles()
     std::cout << netTarget->value() << std::endl;
 
     std::string targetFolder(netTarget->value());
-    std::string dllPath = "bin/Release/" + targetFolder + "/" + projectName + ".dll";
+    std::string dllFileName = projectName + ".dll";
+    std::string dllPath = "bin/Release/" + targetFolder + "/" + dllFileName;
     if (isDev)
     {
         dllPath = "bin/Debug/" + targetFolder + "/" + projectName + ".dll";
@@ -253,6 +298,36 @@ void CSharpHandle::ProjectEnvironment::LoadAssembles()
     {
         std::cout << "Carregado com sucesso" << std::endl;
     }
+
+    std::string folder_path = "bin/Release/" + targetFolder;
+    if (isDev)
+    {
+        folder_path = "bin/Debug/" + targetFolder;
+    }
+    for (const auto &entry : fs::directory_iterator(folder_path))
+    {
+        if (entry.path().extension() == ".dll")
+        {
+            if (dllFileName == entry.path().filename().string())
+            {
+                continue;
+            }
+            std::cout << "Loading -> " << entry.path().string() << ";" << std::endl;
+            try
+            {
+                size_t lastDot = entry.path().filename().string().find_last_of(".");
+                std::string assemblyKey = entry.path().filename().string().substr(0, lastDot);
+                MonoAssembly *tAssembly = mono_domain_assembly_open(projectDomain, entry.path().c_str());
+
+                thirdPartyAssembles[assemblyKey] = tAssembly;
+            }
+            catch (...)
+            {
+                std::cerr << "Error loading: " << entry.path().string() << std::endl;
+            }
+        }
+    }
+    std::cout << "Carregando ThirdParty" << std::endl;
 }
 
 void CSharpHandle::ProjectEnvironment::SearchForScripts()

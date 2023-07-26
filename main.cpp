@@ -10,11 +10,8 @@
 #include <filesystem>
 #include "CLI11.hpp"
 #include "byterunner_libs/cli/cli.h"
-#include "byterunner_libs/runner_gui/runner_gui.h"
 int main(int argc, char** argv)
 {   
-    LoadWindow();
-
     CLI::App app{"ByteRunnerDB"};
 
 
