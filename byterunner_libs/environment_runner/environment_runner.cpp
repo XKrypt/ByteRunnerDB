@@ -20,6 +20,7 @@
 #include <iconv.h>
 #include <vector>
 #include <sstream>
+
 namespace fs = boost::filesystem;
 using json = nlohmann::json;
 
@@ -61,13 +62,34 @@ EnvironmentRunner::~EnvironmentRunner()
 {
 }
 
+void EnvironmentRunner::EventsHandler(const evpp::TCPConnPtr &conn, evpp::Buffer *buff)
+{
+    std::string data = buff->NextAllString();
+
+    json jsonData;
+
+    try
+    {
+        jsonData = json::parse(data);
+    }
+    catch (const json::parse_error &e)
+    {
+        std::cerr << e.what() << '\n';
+
+        return;
+    }
+
+    std::string operation = jsonData["operation"];
+
+}
+
 void EnvironmentRunner::StartEnvironment()
 {
     this->projectEnvironment.StartWatch();
     this->serverRunner.OnNewConnectEventRegister([this](const evpp::TCPConnPtr &conn)
                                                  { this->OnNewConnection(conn); });
-    this->serverRunner.OnReceiveDataEventRegister([this](const evpp::TCPConnPtr &conn, std::string &message)
-                                                  { this->OnReceiveData(conn, message); });
+    this->serverRunner.OnReceiveDataEventRegister([this](const evpp::TCPConnPtr &conn, evpp::Buffer *buf)
+                                                  { this->OnReceiveData(conn, buf); });
     this->serverRunner.StartHost();
 }
 
@@ -76,19 +98,22 @@ void EnvironmentRunner::OnNewConnection(const evpp::TCPConnPtr &conn)
     std::cout << "Conectado: " << conn->AddrToString() << std::endl;
 }
 
-void EnvironmentRunner::OnReceiveData(const evpp::TCPConnPtr &conn, std::string &message)
+void EnvironmentRunner::OnReceiveData(const evpp::TCPConnPtr &conn, evpp::Buffer *buf)
 {
     std::string methodName = "OnReceiveData";
+
+    std::string message = buf->NextAllString();
     void *args[1];
     mono_jit_thread_attach(mono_get_root_domain());
     MonoString *messageMono = mono_string_new(mono_get_root_domain(), message.c_str());
 
     MonoObject *runnerDataClass = projectEnvironment.CreateClassInstance("RunnerData", "", projectEnvironment.thirdPartyAssembles["RunnerLib"]);
-    if(runnerDataClass == nullptr){
+    if (runnerDataClass == nullptr)
+    {
         return;
     }
-    MonoClass* runnerDataClassType = mono_object_get_class(runnerDataClass);
-    MonoClassField *ipAddress = mono_class_get_field_from_name(runnerDataClassType,"ipAddress");
+    MonoClass *runnerDataClassType = mono_object_get_class(runnerDataClass);
+    MonoClassField *ipAddress = mono_class_get_field_from_name(runnerDataClassType, "ipAddress");
     MonoClassField *id = mono_class_get_field_from_name(runnerDataClassType, "id");
     MonoClassField *data = mono_class_get_field_from_name(runnerDataClassType, "data");
 

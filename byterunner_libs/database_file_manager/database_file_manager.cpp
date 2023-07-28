@@ -17,6 +17,11 @@
 #include <boost/filesystem.hpp>
 using json = nlohmann::json;
 namespace fs = boost::filesystem;
+
+
+
+//TODO: Manage data file blocks
+
 DatabaseFileManager::DatabaseFileManager()
 {
     std::string currentPath = fs::current_path().string();
@@ -35,6 +40,11 @@ DatabaseFileManager::DatabaseFileManager()
         this->projectFolder = projectFolder;
         std::cout << "Carregada com sucesso" << std::endl;
     }
+}
+
+
+void DatabaseFileManager::LoadDatabaseFiles(){
+    
 }
 
 int DatabaseFileManager::bytesToInt(std::uint8_t *buffer)
@@ -79,7 +89,7 @@ void DatabaseFileManager::createStorage(std::string &name, std::string &rules)
 
 bool DatabaseFileManager::ModifyDocument(std::string &id, std::string &filePath, std::string &newData)
 {
-    std::ifstream dbFile(this->projectFolder + filePath, std::ios::binary);
+    std::ifstream dbFile(filePath, std::ios::binary);
 
     int currentPosition = 0;
     dbFile.seekg(0, std::ios::end);
@@ -125,7 +135,7 @@ bool DatabaseFileManager::ModifyDocument(std::string &id, std::string &filePath,
                 dataBytes[i] = newData[i];
             }
 
-            std::ofstream outputFile(this->projectFolder + filePath + ".temp", std::ios::app);
+            std::ofstream outputFile(filePath + ".temp", std::ios::app);
             std::streampos i = 0;
             while (i < fileSize)
             {
@@ -151,8 +161,8 @@ bool DatabaseFileManager::ModifyDocument(std::string &id, std::string &filePath,
             outputFile.close();
             dbFile.close();
 
-            cppfs::FileHandle oldFile = cppfs::fs::open(this->projectFolder + filePath);
-            cppfs::FileHandle newFile = cppfs::fs::open(this->projectFolder + filePath + ".temp");
+            cppfs::FileHandle oldFile = cppfs::fs::open(filePath);
+            cppfs::FileHandle newFile = cppfs::fs::open(filePath + ".temp");
 
             oldFile.remove();
             newFile.rename(filePath);
@@ -168,7 +178,7 @@ bool DatabaseFileManager::ModifyDocument(std::string &id, std::string &filePath,
 }
 bool DatabaseFileManager::DeleteDocument(std::string &id, std::string &filePath)
 {
-    std::ifstream dbFile(this->projectFolder + filePath, std::ios::binary);
+    std::ifstream dbFile(filePath, std::ios::binary);
 
     int currentPosition = 0;
     dbFile.seekg(0, std::ios::end);
@@ -204,7 +214,7 @@ bool DatabaseFileManager::DeleteDocument(std::string &id, std::string &filePath)
         if (strcmp(id.c_str(), idString.c_str()) == 0)
         {
 
-            std::ofstream outputFile(this->projectFolder + filePath + ".temp", std::ios::app);
+            std::ofstream outputFile(filePath + ".temp", std::ios::app);
             std::streampos i = 0;
             while (i < fileSize)
             {
@@ -225,8 +235,8 @@ bool DatabaseFileManager::DeleteDocument(std::string &id, std::string &filePath)
             outputFile.close();
             dbFile.close();
 
-            cppfs::FileHandle oldFile = cppfs::fs::open(this->projectFolder + filePath);
-            cppfs::FileHandle newFile = cppfs::fs::open(this->projectFolder + filePath + ".temp");
+            cppfs::FileHandle oldFile = cppfs::fs::open(filePath);
+            cppfs::FileHandle newFile = cppfs::fs::open(filePath + ".temp");
 
             oldFile.remove();
             newFile.rename(filePath);
@@ -241,9 +251,12 @@ bool DatabaseFileManager::DeleteDocument(std::string &id, std::string &filePath)
     return false;
 }
 
+
+
+//TODO: don´t use filepath anymore
 std::string DatabaseFileManager::readDocument(std::string &id, std::string &filePath)
 {
-    std::ifstream dbFile(projectFolder + filePath, std::ios::binary);
+    std::ifstream dbFile(filePath, std::ios::binary);
 
     int currentPosition = 0;
     std::cout << "Database size:" << dbFile.end << std::endl;
@@ -298,6 +311,8 @@ std::string DatabaseFileManager::readDocument(std::string &id, std::string &file
     return "-1";
 }
 
+
+//TODO: remove fileName;
 bool DatabaseFileManager::writeToDatabaseFile(std::string &data, std::string &fileName, std::string uuidStr)
 {
 
@@ -329,7 +344,7 @@ bool DatabaseFileManager::writeToDatabaseFile(std::string &data, std::string &fi
         dataBytes[i] = data[i];
     }
 
-    std::ofstream file(projectFolder + fileName, std::ofstream::app);
+    std::ofstream file(fileName, std::ofstream::app);
 
     if (file.good())
     {
@@ -343,7 +358,7 @@ bool DatabaseFileManager::writeToDatabaseFile(std::string &data, std::string &fi
     }
 
     file.close();
-    std::ofstream outputFile(projectFolder + fileName, std::ios::binary);
+    std::ofstream outputFile(fileName, std::ios::binary);
     outputFile.write((char *)&dataSizeBytes, sizeof(dataSizeBytes));
     outputFile.write((char *)&idSizeBytes, sizeof(idSizeBytes));
     outputFile.write((char *)&idBytes, sizeof(idBytes));

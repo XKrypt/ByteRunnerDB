@@ -21,6 +21,8 @@ private:
     void intToBytes(int valorInt, unsigned char *bytes);
     int bytesToInt(std::uint8_t* buffer);
 
+    void LoadDatabaseFiles();
+
     
 
 public:

@@ -4,16 +4,113 @@
 #include "cppfs/FileHandle.h"
 #include "../../libs/nlhoman/json.hpp"
 #include <iostream>
+#include <fstream>
 #include <boost/filesystem.hpp>
+#include "../../libs/uuid_v4/uuid_v4.h"
+#include "../../libs/uuid_v4/endianness.h"
+#include <chrono>
 namespace fs = boost::filesystem;
+using json = nlohmann::json;
 DatabaseManager::DatabaseManager()
 {
     std::string currentPath = fs::current_path().string();
     this->projectFolder = currentPath;
+
+    std::ifstream jsonData(projectFolder + "/runner-project.json");
+
+    config = json::parse(jsonData);
+
+    maxFileSize = config["max_file_size"];
+
+    if (config["storages"].is_array())
+    {
+        for (auto storageJson : config["storages"])
+        {
+            Storage storage;
+            storage.storageName = storageJson["name"];
+            storage.storageFolder = storageJson["folder"];
+
+            storages.push_back(storage);
+        }
+    }
+    else
+    {
+        std::cout << "error loading storages.";
+    }
 }
 
 DatabaseManager::~DatabaseManager()
 {
+}
+
+std::string DatabaseManager::GetFileToWrite(Storage *storage)
+{
+    std::string storagePath = projectFolder + "/" + storage->storageFolder;
+
+    for (const auto &entry : fs::directory_iterator(storagePath))
+    {
+        if (entry.path().extension() == ".byteRun")
+        {
+            size_t dbFileSize = fs::file_size(entry.path());
+            if (dbFileSize < maxFileSize)
+            {
+                return entry.path().string();
+            }
+        }
+    }
+
+    // Obter o timestamp atual usando o relógio de alta resolução
+    auto now = std::chrono::high_resolution_clock::now();
+
+    // Converter o timestamp para um valor inteiro (representando nanossegundos)
+    auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+
+    // Imprimir o timestamp
+    std::cout << "Timestamp: " << timestamp << std::endl;
+
+    return storagePath + "/" + std::to_string(timestamp) + ".byteRun";
+}
+
+bool DatabaseManager::WriteNewDocument(const char *storageName, json data)
+{
+    UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
+    UUIDv4::UUID uuid = uuidGenerator.getUUID();
+
+    data["uid"] = uuid.str();
+
+    std::string dataString = data.dump();
+
+   Storage *storageToWrite = nullptr;
+    for (auto &storage : storages)
+    {
+        if (storage.storageName.c_str() == storageName)
+        {
+            storageToWrite =  &storage;
+            break;
+        }
+    }
+
+    if (storageToWrite == nullptr)
+    {
+        std::cout << "storage not found" << std::endl;
+        return false;
+    }
+    std::string fileName = GetFileToWrite(storageToWrite);
+    databaseFileManager.writeToDatabaseFile(dataString, fileName, uuid.str());
+
+    return true;
+}
+bool DatabaseManager::UpdateDocument(json data)
+{
+    return true;
+}
+bool DatabaseManager::DeleteDocument(json data)
+{
+    return true;
+}
+bool DatabaseManager::GetDocument(json data)
+{
+    return true;
 }
 
 void DatabaseManager::createProject(std::string &folder, std::string &projectName)

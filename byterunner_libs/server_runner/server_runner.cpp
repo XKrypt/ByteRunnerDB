@@ -35,12 +35,12 @@ Server::ServerRunner::ServerRunner()
 Server::ServerRunner::~ServerRunner()
 {
 }
-void Server::ServerRunner::OnNewConnectEventRegister(std::function<void(const evpp::TCPConnPtr&)> func)
+void Server::ServerRunner::OnNewConnectEventRegister(std::function<void(const evpp::TCPConnPtr &)> func)
 {
     onNewConnection.push_back(func);
 }
 
-void Server::ServerRunner::OnReceiveDataEventRegister(std::function<void(const evpp::TCPConnPtr&,std::string&)> func)
+void Server::ServerRunner::OnReceiveDataEventRegister(std::function<void(const evpp::TCPConnPtr &, evpp::Buffer *)> func)
 {
     onReceiveData.push_back(func);
 }
@@ -69,17 +69,16 @@ void Server::ServerRunner::OnConnection(const evpp::TCPConnPtr &connection)
 
     if (connection.get()->IsConnected())
     {
-        std::cout << "Nova conexão estabelecida: " << connection->remote_addr() << " id:" << connection->id()  << std::endl;
+        std::cout << "Nova conexão estabelecida: " << connection->remote_addr() << " id:" << connection->id() << std::endl;
 
         // Adicionar a conexão ao contêiner
         this->connections.insert(connection);
-
     }
     else
     {
         std::cout << "Conexão encerrada: " << connection->remote_addr() << std::endl;
 
-         connections.erase(connection);
+        connections.erase(connection);
     }
 }
 void Server::ServerRunner::OnMessage(const evpp::TCPConnPtr &conn, evpp::Buffer *buf)
@@ -87,7 +86,8 @@ void Server::ServerRunner::OnMessage(const evpp::TCPConnPtr &conn, evpp::Buffer 
     std::string message = buf->NextAllString();
     std::cout << "Mensagem recebida de " << conn->remote_addr() << ": " << message << std::endl;
     std::cout << "Size of events" << onReceiveData.size() << std::endl;
-    for(int i =0; i < onReceiveData.size(); i++){
-        onReceiveData[i](conn, message);
+    for (int i = 0; i < onReceiveData.size(); i++)
+    {
+        onReceiveData[i](conn, buf);
     }
 }

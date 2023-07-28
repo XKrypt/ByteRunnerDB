@@ -11,7 +11,7 @@ namespace Runner
         /// </summary>
         /// <param name="id"></param>
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public extern static void DisconnectClient(int id);
+        public extern static void DisconnectClient(int id, string reason);
 
 
         /// <summary>

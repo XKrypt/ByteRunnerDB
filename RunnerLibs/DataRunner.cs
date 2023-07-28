@@ -1,10 +1,13 @@
 using System;
-
-class DataRunner
+using Runner;
+namespace Runner
 {
-    string ipAddress;
+    public class DataRunner
+    {
+        public string ipAddress;
 
-    string id;
+        public string id;
 
-    string data;
+        public string data;
+    }
 }

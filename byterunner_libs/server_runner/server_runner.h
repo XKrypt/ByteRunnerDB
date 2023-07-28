@@ -21,7 +21,7 @@ namespace Server
         json configs;
         evpp::TCPServer *server;
         std::vector<std::function<void(const evpp::TCPConnPtr &)>> onNewConnection;
-        std::vector<std::function<void(const evpp::TCPConnPtr &, std::string &)>> onReceiveData;
+        std::vector<std::function<void(const evpp::TCPConnPtr &, evpp::Buffer *)>> onReceiveData;
         evpp::EventLoop *loop;
         std::unordered_set<evpp::TCPConnPtr> connections;
         void OnConnection(const evpp::TCPConnPtr &conn);
@@ -34,7 +34,7 @@ namespace Server
         void StartHost();
 
         void OnNewConnectEventRegister(std::function<void(const evpp::TCPConnPtr &)>);
-        void OnReceiveDataEventRegister(std::function<void(const evpp::TCPConnPtr &, std::string &)>);
+        void OnReceiveDataEventRegister(std::function<void(const evpp::TCPConnPtr &, evpp::Buffer *)> func);
     };
 
 

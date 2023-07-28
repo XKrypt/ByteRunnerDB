@@ -8,12 +8,10 @@ using json = nlohmann::json;
 class Storage
 {
 private:
+public:
    std::string storageName;
    std::string storageFile;
    std::string storageFolder;
-   std::string storageScripts;
-   json rules;
-public:
     Storage();
     ~Storage();
 };
