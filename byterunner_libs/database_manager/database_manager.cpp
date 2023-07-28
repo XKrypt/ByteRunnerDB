@@ -29,7 +29,7 @@ DatabaseManager::DatabaseManager()
             Storage storage;
             storage.storageName = storageJson["name"];
             storage.storageFolder = storageJson["folder"];
-
+            std::cout << storage.storageName << std::endl;
             storages.push_back(storage);
         }
     }
@@ -80,12 +80,14 @@ bool DatabaseManager::WriteNewDocument(const char *storageName, json data)
 
     std::string dataString = data.dump();
 
-   Storage *storageToWrite = nullptr;
+    Storage *storageToWrite = nullptr;
     for (auto &storage : storages)
     {
-        if (storage.storageName.c_str() == storageName)
+        std::cout << storage.storageName << std::endl;
+        if (storage.storageName == storageName)
         {
-            storageToWrite =  &storage;
+            storageToWrite = &storage;
+            std::cout << "found" << std::endl;
             break;
         }
     }
@@ -100,13 +102,76 @@ bool DatabaseManager::WriteNewDocument(const char *storageName, json data)
 
     return true;
 }
-bool DatabaseManager::UpdateDocument(json data)
+bool DatabaseManager::OverrideDocument(const char *docId, const char *storageName, json data)
 {
-    return true;
+    Storage *storageToWrite = nullptr;
+    for (auto &storage : storages)
+    {
+        std::cout << storage.storageName << std::endl;
+        if (storage.storageName == storageName)
+        {
+            storageToWrite = &storage;
+            std::cout << "found" << std::endl;
+            break;
+        }
+    }
+
+    if (storageToWrite == nullptr)
+    {
+        std::cout << "storage not found" << std::endl;
+        return false;
+    }
+
+    data["id"] = docId;
+    std::string storagePath = projectFolder + "/" + storageToWrite->storageFolder;
+
+    for (const auto &entry : fs::directory_iterator(storagePath))
+    {
+        if (entry.path().extension() == ".byteRun")
+        {
+            std::string idDoc(docId);
+            std::string file = entry.path().string();
+            std::string dataStr = data.dump();
+
+            bool result = databaseFileManager.ModifyDocument(idDoc, file, dataStr);
+            if (result)return true;
+        }
+    }
+
+    return false;
 }
-bool DatabaseManager::DeleteDocument(json data)
+bool DatabaseManager::DeleteDocument(const char *docId, const char *storageName)
 {
-    return true;
+    Storage *storageToWrite = nullptr;
+    for (auto &storage : storages)
+    {
+        std::cout << storage.storageName << std::endl;
+        if (storage.storageName == storageName)
+        {
+            storageToWrite = &storage;
+            std::cout << "found" << std::endl;
+            break;
+        }
+    }
+
+    if (storageToWrite == nullptr)
+    {
+        std::cout << "storage not found" << std::endl;
+        return false;
+    }
+    std::string storagePath = projectFolder + "/" + storageToWrite->storageFolder;
+
+    for (const auto &entry : fs::directory_iterator(storagePath))
+    {
+        if (entry.path().extension() == ".byteRun")
+        {
+            std::string idDoc(docId);
+            std::string file = entry.path().string();
+            bool result = databaseFileManager.DeleteDocument(idDoc, file);
+            if (result)return true;
+        }
+    }
+    return false;
 }
 bool DatabaseManager::GetDocument(json data)
 {

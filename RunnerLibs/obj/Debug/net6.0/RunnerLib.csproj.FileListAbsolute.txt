@@ -10,3 +10,7 @@
 /home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/refint/RunnerLib.dll
 /home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/RunnerLib.pdb
 /home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/ref/RunnerLib.dll
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/bin/Debug/net6.0/Newtonsoft.Json.dll
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/bin/Debug/net6.0/Newtonsoft.Json.pdb
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/bin/Debug/net6.0/Newtonsoft.Json.xml
+/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/Debug/net6.0/RunnerLib.csproj.CopyComplete

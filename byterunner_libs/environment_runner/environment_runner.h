@@ -19,11 +19,11 @@ private:
     std::string projectFolder;
     json configs;
 
-    void OnReceiveData(const evpp::TCPConnPtr& conn, evpp::Buffer *buf);
+    void OnReceiveData(const evpp::TCPConnPtr& conn, Server::Buffer buf);
     void OnNewConnection(const evpp::TCPConnPtr& conn);
 
 
-    void EventsHandler(const evpp::TCPConnPtr& conn, evpp::Buffer *buf);
+    void EventsHandler(const evpp::TCPConnPtr& conn, Server::Buffer buf);
 
 public:
     EnvironmentRunner(/* args */);

@@ -21,8 +21,8 @@ public:
     ~DatabaseManager();
 
     bool WriteNewDocument(const char *storageName, json data);
-    bool UpdateDocument(json data);
-    bool DeleteDocument(json data);
+    bool OverrideDocument(const char *docId, const char *storageName, json data);
+    bool DeleteDocument(const char *docId, const char *storageName);
     bool GetDocument(json data);
 
     std::string GetFileToWrite(Storage* storage);

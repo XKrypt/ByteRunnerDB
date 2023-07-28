@@ -62,33 +62,83 @@ EnvironmentRunner::~EnvironmentRunner()
 {
 }
 
-void EnvironmentRunner::EventsHandler(const evpp::TCPConnPtr &conn, evpp::Buffer *buff)
+void EnvironmentRunner::EventsHandler(const evpp::TCPConnPtr &conn, Server::Buffer buffer)
 {
-    std::string data = buff->NextAllString();
 
-    json jsonData;
-
+    std::string data = buffer.allString;
+    std::cout << data << "  DATA" << std::endl;
     try
     {
-        jsonData = json::parse(data);
+        json jsonData = json::parse(data);
+
+        std::string operation = jsonData["operation"];
+        std::string storage = jsonData["storage"];
+
+        if (operation == "INSERT")
+        {
+            databaseManager.WriteNewDocument(storage.c_str(), jsonData["data"]);
+        }
+
+        if (operation == "OVERRIDE")
+        {
+            std::string docId = jsonData["id"];
+            databaseManager.OverrideDocument(docId.c_str(), storage.c_str(), jsonData["data"]);
+        }
+
+        if (operation == "DELETE")
+        {
+            std::string docId = jsonData["id"];
+            databaseManager.DeleteDocument(docId.c_str(), storage.c_str());
+        }
     }
     catch (const json::parse_error &e)
     {
+        std::cerr << "LINE 77: Environment runner" << '\n';
         std::cerr << e.what() << '\n';
 
         return;
     }
-
-    std::string operation = jsonData["operation"];
-
 }
+
+// void Csharp(){
+//       std::string methodName = "OnReceiveData";
+
+//     std::string message = buf->NextAllString();
+//     void *args[1];
+//     mono_jit_thread_attach(mono_get_root_domain());
+//     MonoString *messageMono = mono_string_new(mono_get_root_domain(), message.c_str());
+
+//     MonoObject *runnerDataClass = projectEnvironment.CreateClassInstance("RunnerData", "", projectEnvironment.thirdPartyAssembles["RunnerLib"]);
+//     if (runnerDataClass == nullptr)
+//     {
+//         return;
+//     }
+//     MonoClass *runnerDataClassType = mono_object_get_class(runnerDataClass);
+//     MonoClassField *ipAddress = mono_class_get_field_from_name(runnerDataClassType, "ipAddress");
+//     MonoClassField *id = mono_class_get_field_from_name(runnerDataClassType, "id");
+//     MonoClassField *data = mono_class_get_field_from_name(runnerDataClassType, "data");
+
+//     std::ostringstream oss;
+//     oss << conn->id();
+//     std::string idString = oss.str();
+//     MonoString *ipAddresValue = mono_string_new(mono_get_root_domain(), conn->remote_addr().c_str());
+//     MonoString *idValue = mono_string_new(mono_get_root_domain(), idString.c_str());
+//     MonoString *dataValue = mono_string_new(mono_get_root_domain(), message.c_str());
+
+//     mono_field_set_value(runnerDataClass, ipAddress, ipAddresValue);
+//     mono_field_set_value(runnerDataClass, id, idValue);
+//     mono_field_set_value(runnerDataClass, data, dataValue);
+
+//     args[0] = runnerDataClass;
+//     projectEnvironment.RunMethodFromBehaviours(methodName, args, 1);
+// }
 
 void EnvironmentRunner::StartEnvironment()
 {
     this->projectEnvironment.StartWatch();
     this->serverRunner.OnNewConnectEventRegister([this](const evpp::TCPConnPtr &conn)
                                                  { this->OnNewConnection(conn); });
-    this->serverRunner.OnReceiveDataEventRegister([this](const evpp::TCPConnPtr &conn, evpp::Buffer *buf)
+    this->serverRunner.OnReceiveDataEventRegister([this](const evpp::TCPConnPtr &conn, Server::Buffer buf)
                                                   { this->OnReceiveData(conn, buf); });
     this->serverRunner.StartHost();
 }
@@ -98,38 +148,11 @@ void EnvironmentRunner::OnNewConnection(const evpp::TCPConnPtr &conn)
     std::cout << "Conectado: " << conn->AddrToString() << std::endl;
 }
 
-void EnvironmentRunner::OnReceiveData(const evpp::TCPConnPtr &conn, evpp::Buffer *buf)
+void EnvironmentRunner::OnReceiveData(const evpp::TCPConnPtr &conn, Server::Buffer buf)
 {
-    std::string methodName = "OnReceiveData";
 
-    std::string message = buf->NextAllString();
-    void *args[1];
-    mono_jit_thread_attach(mono_get_root_domain());
-    MonoString *messageMono = mono_string_new(mono_get_root_domain(), message.c_str());
+    EventsHandler(conn, buf);
 
-    MonoObject *runnerDataClass = projectEnvironment.CreateClassInstance("RunnerData", "", projectEnvironment.thirdPartyAssembles["RunnerLib"]);
-    if (runnerDataClass == nullptr)
-    {
-        return;
-    }
-    MonoClass *runnerDataClassType = mono_object_get_class(runnerDataClass);
-    MonoClassField *ipAddress = mono_class_get_field_from_name(runnerDataClassType, "ipAddress");
-    MonoClassField *id = mono_class_get_field_from_name(runnerDataClassType, "id");
-    MonoClassField *data = mono_class_get_field_from_name(runnerDataClassType, "data");
-
-    std::ostringstream oss;
-    oss << conn->id();
-    std::string idString = oss.str();
-    MonoString *ipAddresValue = mono_string_new(mono_get_root_domain(), conn->remote_addr().c_str());
-    MonoString *idValue = mono_string_new(mono_get_root_domain(), idString.c_str());
-    MonoString *dataValue = mono_string_new(mono_get_root_domain(), message.c_str());
-
-    mono_field_set_value(runnerDataClass, ipAddress, ipAddresValue);
-    mono_field_set_value(runnerDataClass, id, idValue);
-    mono_field_set_value(runnerDataClass, data, dataValue);
-
-    args[0] = runnerDataClass;
-    projectEnvironment.RunMethodFromBehaviours(methodName, args, 1);
-
-    std::cout << message << std::endl;
+    std::string data = buf.allString;
+    std::cout << data << "  DATA" << std::endl;
 }

@@ -40,7 +40,7 @@ void Server::ServerRunner::OnNewConnectEventRegister(std::function<void(const ev
     onNewConnection.push_back(func);
 }
 
-void Server::ServerRunner::OnReceiveDataEventRegister(std::function<void(const evpp::TCPConnPtr &, evpp::Buffer *)> func)
+void Server::ServerRunner::OnReceiveDataEventRegister(std::function<void(const evpp::TCPConnPtr &,  Buffer)> func)
 {
     onReceiveData.push_back(func);
 }
@@ -86,8 +86,12 @@ void Server::ServerRunner::OnMessage(const evpp::TCPConnPtr &conn, evpp::Buffer 
     std::string message = buf->NextAllString();
     std::cout << "Mensagem recebida de " << conn->remote_addr() << ": " << message << std::endl;
     std::cout << "Size of events" << onReceiveData.size() << std::endl;
+    Buffer buff;
+
+    buff.allString = message;
+    buff.buffer = buf;
     for (int i = 0; i < onReceiveData.size(); i++)
     {
-        onReceiveData[i](conn, buf);
+        onReceiveData[i](conn, buff);
     }
 }
