@@ -7,4 +7,4 @@ Os dados são salvos na própria pasta do projeto permitindo que possa ser movid
 
 ***
 
-# EM DESENVOLVIMENTO NÃO UTILIZAR
+# EM DESENVOLVIMENTO
