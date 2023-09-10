@@ -1,11 +1,13 @@
 # Arquivos gerados pelo CMake
 /build/
+/out/
 /CMakeCache.txt
 /CMakeFiles/
 /CMakeScripts/
 /CMakeTmp/
 /CMakeLists.txt.user
-
+/.vs
+/vcpkg_installed
 # Arquivos gerados pelo sistema operacional
 .DS_Store
 Thumbs.db

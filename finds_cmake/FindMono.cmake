@@ -1,8 +1,16 @@
+
+if(UNIX)
 # Encontre o caminho para o Mono
 set(Mono_INCLUDE_DIRS "/usr/include/mono-2.0")
+endif()
 
+
+if(WIN32)
+set(Mono_INCLUDE_DIRS $ENV{MONO_ROOT}\\include\\mono-2.0)
+set(Mono_LIBRARY $ENV{MONO_ROOT}\\lib\\mono-2.0-sgen.lib)
+endif()
 # Defina a biblioteca Mono
-find_library(Mono_LIBRARY NAMES mono-2.0 mono)
+find_library(Mono_LIBRARY NAMES mono-2.0 mono PATHS ${Mono_LIBRARY})
 
 # Verifique se o Mono foi encontrado
 if(NOT Mono_INCLUDE_DIRS)
@@ -31,5 +39,5 @@ if(Mono_FOUND)
     message("Incluindo mono includes")
     include_directories(Mono_INCLUDE_DIR)
     set_property(TARGET Mono::Mono PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${Mono_INCLUDE_DIR})
-    set_property(TARGET Mono::Mono PROPERTY INTERFACE_LINK_LIBRARIES ${Mono_LIBRARIES})
+    set_property(TARGET Mono::Mono PROPERTY INTERFACE_LINK_LIBRARIES ${Mono_LIBRARY_DIR})
 endif()

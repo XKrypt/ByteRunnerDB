@@ -6,11 +6,13 @@
 #include <evpp/tcp_server.h>
 #include <evpp/tcp_conn.h>
 #include <evpp/buffer.h>
+#include <cppfs/FilePath.h>
 #include <unordered_set>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 using json = nlohmann::json;
 using namespace Server;
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
+
 Server::ServerRunner::ServerRunner()
 {
     std::string currentPath = fs::current_path().string();

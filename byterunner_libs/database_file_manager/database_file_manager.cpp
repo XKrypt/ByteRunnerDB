@@ -3,8 +3,7 @@
 #include <cppfs/fs.h>
 #include <cppfs/FileHandle.h>
 #include <cppfs/FilePath.h>
-#include "uuid/uuid.h"
-#include "endianness.h"
+#include <endianness.h>
 #include <iostream>
 #include <vector>
 #include <bitset>
@@ -14,9 +13,9 @@
 #include <sys/stat.h>
 #include <json.hpp>
 #include <cstdint>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 using json = nlohmann::json;
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 
 
@@ -24,8 +23,10 @@ namespace fs = boost::filesystem;
 
 DatabaseFileManager::DatabaseFileManager()
 {
+    
     std::string currentPath = fs::current_path().string();
     this->projectFolder = currentPath;
+    
     cppfs::FileHandle folder = cppfs::fs::open(this->projectFolder);
 
     if (folder.exists() && folder.isDirectory())
@@ -107,7 +108,7 @@ bool DatabaseFileManager::ModifyDocument(std::string &id, std::string &filePath,
         dbFile.read((char *)(&idSizeInt8), sizeof(idSizeInt8));
 
         int sizeOfId = this->bytesToInt(idSizeInt8);
-        char idBytes[sizeOfId];
+        char*  idBytes = new char[sizeOfId];
 
         dbFile.seekg(currentPosition + 8);
         dbFile.read(idBytes, sizeof(idBytes));
@@ -128,7 +129,7 @@ bool DatabaseFileManager::ModifyDocument(std::string &id, std::string &filePath,
             std::uint8_t dataSizeBytes[4];
             this->intToBytes(dataSize, dataSizeBytes);
 
-            char dataBytes[dataSize];
+            char* dataBytes = new char[dataSize];
 
             for (size_t i = 0; i < newData.length(); i++)
             {
@@ -196,7 +197,7 @@ bool DatabaseFileManager::DeleteDocument(std::string &id, std::string &filePath)
         dbFile.read((char *)(&idSizeInt8), sizeof(idSizeInt8));
 
         int sizeOfId = this->bytesToInt(idSizeInt8);
-        char idBytes[sizeOfId];
+        char* idBytes =  new char[sizeOfId];
 
         dbFile.seekg(currentPosition + 8);
         dbFile.read(idBytes, sizeof(idBytes));
@@ -273,7 +274,7 @@ std::string DatabaseFileManager::readDocument(std::string &id, std::string &file
         dbFile.read((char *)(&idSizeInt8), sizeof(idSizeInt8));
 
         int sizeOfId = this->bytesToInt(idSizeInt8);
-        char idBytes[sizeOfId];
+        char* idBytes = new char[sizeOfId];
 
         dbFile.seekg(currentPosition + 8);
         dbFile.read(idBytes, sizeof(idBytes));
@@ -290,7 +291,7 @@ std::string DatabaseFileManager::readDocument(std::string &id, std::string &file
 
         if (strcmp(id.c_str(), idString.c_str()) == 0)
         {
-            char dataBytes[sizeOfData];
+            char* dataBytes = new char[sizeOfData];
             // Read document
             dbFile.seekg((currentPosition + 8 + sizeOfId));
             dbFile.read(dataBytes, sizeof(dataBytes));
@@ -321,8 +322,8 @@ bool DatabaseFileManager::writeToDatabaseFile(std::string &data, std::string &fi
 
     std::cout << uuidStr << std::endl;
 
-    std::uint8_t idSizeBytes[4];
-    std::uint8_t dataSizeBytes[4];
+    std::uint8_t* idSizeBytes = new std::uint8_t[4];
+    std::uint8_t* dataSizeBytes = new std::uint8_t[4];
 
     this->intToBytes(idSize, idSizeBytes);
     this->intToBytes(dataSize, dataSizeBytes);
@@ -330,10 +331,10 @@ bool DatabaseFileManager::writeToDatabaseFile(std::string &data, std::string &fi
     std::cout << "Size of id: " << this->bytesToInt(idSizeBytes) << std::endl;
     std::cout << "Size of data: " << this->bytesToInt(dataSizeBytes) << std::endl;
 
-    char totalData[8 + dataSize + idSize];
+    char* totalData = new char[8 + dataSize + idSize];
 
-    char dataBytes[data.length()];
-    char idBytes[uuidStr.length()];
+    char* dataBytes = new char[data.length()];
+    char* idBytes = new char[uuidStr.length()];
 
     for (size_t i = 0; i < uuidStr.length(); i++)
     {

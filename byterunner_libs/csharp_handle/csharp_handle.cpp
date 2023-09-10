@@ -1,31 +1,28 @@
 // Mono
-#include <mono-2.0/mono/jit/jit.h>
-#include <mono-2.0/mono/metadata/assembly.h>
-#include <mono-2.0/mono/metadata/debug-helpers.h>
-#include <mono-2.0/mono/metadata/mono-debug.h>
-#include <mono-2.0/mono/metadata/mono-config.h>
-#include <mono-2.0/mono/metadata/exception.h>
-#include <mono-2.0/mono/metadata/object.h>
+#include <mono/jit/jit.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-debug.h>
+#include <mono/metadata/mono-config.h>
+#include <mono/metadata/exception.h>
+#include <mono/metadata/object.h>
 #include <mono/metadata/environment.h>
-#include <mono-2.0/mono/metadata/mono-gc.h>
+#include <mono/metadata/mono-gc.h>
 #include <efsw/efsw.h>
 // end Mono
-
-// NCurses
-#include <ncurses.h>
-
+#include <stdlib.h>
 #include "csharp_handle.h"
 #include <sstream>
 #include "../../libs/rapidxml/rapidxml.hpp"
 #include "../../libs/rapidxml/rapidxml_print.hpp"
 #include <iostream>
 #include <fstream>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <../../libs/nlhoman/json.hpp>
-#include <boost/filesystem.hpp>
 #include <vector>
+#include <stdlib.h>
 namespace xml = rapidxml;
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 using json = nlohmann::json;
 CSharpHandle::ProjectEnvironment::ProjectEnvironment()
 {
@@ -38,14 +35,26 @@ CSharpHandle::ProjectEnvironment::ProjectEnvironment()
     std::ifstream configFile(configPath.path());
 
     this->config = json::parse(configFile);
-
+#ifdef __linux__ 
     mono_set_dirs("/lib", "/etc");
     mono_config_parse("/etc/mono/config");
+    setenv("MONO_DEBUG", "casts,gc,loader,exception,security,alloc", 1);
+#elif _WIN32
+  
+    if (const char* monoRoot = std::getenv("MONO_ROOT")) {
+        std::string monoLibs = std::string(monoRoot) + "\\lib";
+        std::string monoEtc = std::string(monoRoot) + "\\etc";
+        std::string monoConfig = std::string(monoRoot) + "\\etc\\mono\\mconfig\\config";
+
+        mono_set_dirs(monoLibs.c_str(), monoEtc.c_str());
+        mono_config_parse(monoConfig.c_str());
+    }
+    _putenv_s("MONO_DEBUG", "casts,gdb");
+#endif
     MonoDomain *domain = mono_jit_init("Dominio");
     this->projectDomain = domain;
     mono_debug_init(MONO_DEBUG_FORMAT_MONO);
     mono_debug_domain_create(projectDomain);
-    setenv("MONO_DEBUG", "casts,gc,loader,exception,security,alloc", 1);
 }
 CSharpHandle::ProjectEnvironment::~ProjectEnvironment()
 {
@@ -135,7 +144,7 @@ void CSharpHandle::ProjectEnvironment::CompileScripts()
 void CSharpHandle::ProjectEnvironment::LoadClasses()
 {
     MonoImage *image = mono_assembly_get_image(projectAssembly);
-
+    
     const MonoTableInfo *tableInfo = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
 
     int rows = mono_table_info_get_rows(tableInfo);
@@ -284,25 +293,29 @@ void CSharpHandle::ProjectEnvironment::LoadAssembles()
     std::string dllPath = "bin/Release/" + targetFolder + "/" + dllFileName;
     if (isDev)
     {
-        dllPath = "bin/Debug/" + targetFolder + "/" + projectName + ".dll";
+        dllPath = this->projectFolder + "\\" + "bin\\Debug\\" + targetFolder + "\\" + projectName + ".dll";
     }
     std::cout << "Carregando assembly " << dllPath << std::endl;
+    
 
     projectAssembly = mono_domain_assembly_open(this->projectDomain, dllPath.c_str());
 
     if (!projectAssembly)
     {
         std::cout << "Inicialização falhou" << std::endl;
+        exit(1);
+
+        return;
     }
     else
     {
         std::cout << "Carregado com sucesso" << std::endl;
     }
 
-    std::string folder_path = "bin/Release/" + targetFolder;
+    std::string folder_path = "bin\\Release\\" + targetFolder;
     if (isDev)
     {
-        folder_path = "bin/Debug/" + targetFolder;
+        folder_path = this->projectFolder +  "\\bin\\Debug\\" + targetFolder;
     }
     for (const auto &entry : fs::directory_iterator(folder_path))
     {
@@ -317,7 +330,8 @@ void CSharpHandle::ProjectEnvironment::LoadAssembles()
             {
                 size_t lastDot = entry.path().filename().string().find_last_of(".");
                 std::string assemblyKey = entry.path().filename().string().substr(0, lastDot);
-                MonoAssembly *tAssembly = mono_domain_assembly_open(projectDomain, entry.path().c_str());
+                std::string entry_temp = entry.path().string();
+                MonoAssembly *tAssembly = mono_domain_assembly_open(projectDomain, entry_temp.c_str());
 
                 thirdPartyAssembles[assemblyKey] = tAssembly;
             }
@@ -339,6 +353,7 @@ void CSharpHandle::generateScriptProject(std::string &projectFolder, std::string
     xml::xml_document<> doc;
 
     xml::xml_node<char> *projectNode = doc.allocate_node(xml::node_element, "Project");
+  
     xml::xml_node<char> *propertyGroupNode = doc.allocate_node(xml::node_element, "PropertyGroup");
     xml::xml_node<char> *outputType = doc.allocate_node(xml::node_element, "OutputType");
     xml::xml_node<char> *nullable = doc.allocate_node(xml::node_element, "Nullable");
@@ -346,10 +361,11 @@ void CSharpHandle::generateScriptProject(std::string &projectFolder, std::string
     xml::xml_node<char> *implicitUsings = doc.allocate_node(xml::node_element, "ImplicitUsings");
     xml::xml_node<char> *targetFramework = doc.allocate_node(xml::node_element, "TargetFramework");
 
+
     char *outputTypeValue = doc.allocate_string("Library");
     outputType->value(outputTypeValue);
 
-    char *targetFrameworkValue = doc.allocate_string("net7.0");
+    char *targetFrameworkValue = doc.allocate_string("net6.0");
     targetFramework->value(targetFrameworkValue);
 
     char *outputPathValue = doc.allocate_string("Build");

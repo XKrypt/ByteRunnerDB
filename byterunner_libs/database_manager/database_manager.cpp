@@ -1,15 +1,17 @@
 #include "../database_file_manager/database_file_manager.h"
 #include "database_manager.h"
-#include "storage/storage.h"
-#include "cppfs/FileHandle.h"
-#include "../../libs/nlhoman/json.hpp"
+#include "../storage/storage.h"
+#include <cppfs/FileHandle.h>
+#include <cppfs/FilePath.h>
+#include <cppfs/fs.h>
+#include "json.hpp"
 #include <iostream>
 #include <fstream>
-#include <boost/filesystem.hpp>
-#include "../../libs/uuid_v4/uuid_v4.h"
-#include "../../libs/uuid_v4/endianness.h"
+#include <filesystem>
+#include "uuid_v4.h"
+#include "endianness.h"
 #include <chrono>
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 using json = nlohmann::json;
 DatabaseManager::DatabaseManager()
 {
@@ -43,7 +45,7 @@ DatabaseManager::~DatabaseManager()
 {
 }
 
-std::string DatabaseManager::GetFileToWrite(Storage *storage)
+std::string DatabaseManager::GetFileToWrite(Storage* storage)
 {
     std::string storagePath = projectFolder + "/" + storage->storageFolder;
 

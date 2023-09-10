@@ -4,3 +4,6 @@
 [submodule "libs/efsw"]
 	path = libs/efsw
 	url = https://github.com/SpartanJ/efsw
+[submodule "imgui"]
+	path = imgui
+	url = https://github.com/ocornut/imgui.git

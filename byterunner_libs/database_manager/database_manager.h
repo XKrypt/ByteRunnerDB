@@ -1,9 +1,8 @@
-#ifndef DATABASE_MANAGER
-#define DATABASE_MANAGER
+#pragma once
 
 #include "../database_file_manager/database_file_manager.h"
 #include <iostream>
-#include "storage/storage.h"
+#include "../storage/storage.h"
 #include "../../libs/nlhoman/json.hpp"
 using json = nlohmann::json;
 class DatabaseManager
@@ -29,4 +28,3 @@ public:
     static void createProject(std::string &folder, std::string &projectName);
 };
 
-#endif

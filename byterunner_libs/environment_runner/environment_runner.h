@@ -20,13 +20,17 @@ private:
     json configs;
 
     void OnReceiveData(const evpp::TCPConnPtr& conn, Server::Buffer buf);
+    void RunOnReceiveDataBehaviours(const evpp::TCPConnPtr& conn, std::string data );
+    void RunOnWriteDataBehaviours(const evpp::TCPConnPtr& conn, std::string data );
+    void RunOnUpdateDataBehaviours(const evpp::TCPConnPtr& conn, std::string data );
+    void RunOnConnectDataBehaviours(const evpp::TCPConnPtr& conn, std::string data);
     void OnNewConnection(const evpp::TCPConnPtr& conn);
 
 
     void EventsHandler(const evpp::TCPConnPtr& conn, Server::Buffer buf);
 
 public:
-    EnvironmentRunner(/* args */);
+    EnvironmentRunner();
     ~EnvironmentRunner();
     void StartEnvironment();
 };

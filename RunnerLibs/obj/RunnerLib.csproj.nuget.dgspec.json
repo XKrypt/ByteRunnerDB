@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/RunnerLib.csproj": {}
+    "D:\\GitHub\\ByteRunnerDB\\RunnerLibs\\RunnerLib.csproj": {}
   },
   "projects": {
-    "/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/RunnerLib.csproj": {
+    "D:\\GitHub\\ByteRunnerDB\\RunnerLibs\\RunnerLib.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/RunnerLib.csproj",
+        "projectUniqueName": "D:\\GitHub\\ByteRunnerDB\\RunnerLibs\\RunnerLib.csproj",
         "projectName": "RunnerLib",
-        "projectPath": "/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/RunnerLib.csproj",
-        "packagesPath": "/home/fhayha/.nuget/packages/",
-        "outputPath": "/home/fhayha/Documentos/ByteRunnerDB/RunnerLibs/obj/",
+        "projectPath": "D:\\GitHub\\ByteRunnerDB\\RunnerLibs\\RunnerLib.csproj",
+        "packagesPath": "C:\\Users\\Fhayha\\.nuget\\packages\\",
+        "outputPath": "D:\\GitHub\\ByteRunnerDB\\RunnerLibs\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/fhayha/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Fhayha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -53,7 +59,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/fhayha/.dotnet/sdk/6.0.412/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

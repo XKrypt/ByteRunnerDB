@@ -20,7 +20,7 @@ namespace Server
     };
     
 
-    std::unordered_set<evpp::TCPConnPtr> *connections = nullptr;
+    static std::unordered_set<evpp::TCPConnPtr> *connections;
     class ServerRunner
     {
     private:

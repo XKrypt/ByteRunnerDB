@@ -1,0 +1,11 @@
+{
+  "dependencies": [
+    "evpp",
+    "glog",
+    "libevent",
+    "glfw3",
+    "vulkan",
+    "cppfs"
+  ],
+  "builtin-baseline": "c95000e1b5bb62884de08d5e952993c8bced9db6"
+}

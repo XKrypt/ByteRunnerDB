@@ -2,10 +2,6 @@
 #define DATABASE_FILE_MANAGER
 
 #include <iostream>
-#include <cppfs/fs.h>
-#include <cppfs/FileHandle.h>
-#include <cppfs/FilePath.h>
-#include "uuid/uuid.h"
 #include <iostream>
 #include <vector>
 #include <bitset>

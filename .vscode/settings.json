@@ -80,10 +80,12 @@
         "*.ipp": "cpp",
         "bitset": "cpp",
         "cppfs": "cpp",
+        "filesystem": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "C_Cpp.default.customConfigurationVariables": {
 
     
-    }
+    },
+    "dotnet.defaultSolution": "vcpkg_installed/vcpkg/blds/evpp/src/v0.7.0-531fbdc351.clean/vsprojects/libevpp.sln"
 }

@@ -2,14 +2,14 @@
 #define CSHARP_HANDLE
 
 // Mono
-#include <mono-2.0/mono/jit/jit.h>
+#include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
-#include <mono-2.0/mono/metadata/debug-helpers.h>
-#include <mono-2.0/mono/metadata/mono-debug.h>
-#include <mono-2.0/mono/metadata/mono-config.h>
-#include <mono-2.0/mono/metadata/object.h>
+#include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-debug.h>
+#include <mono/metadata/mono-config.h>
+#include <mono/metadata/object.h>
 #include <mono/metadata/environment.h>
-#include <mono-2.0/mono/metadata/mono-gc.h>
+#include <mono/metadata/mono-gc.h>
 #include <vector>
 // end Mono
 
