@@ -81,7 +81,7 @@ MonoObject *CSharpHandle::ProjectEnvironment::CreateClassInstance(const char *cl
 
     if (klass == nullptr)
     {
-        std::cout << "Erro ao carregar a classe" << std::endl;
+        std::cout << "Error loading class" << std::endl;
         return nullptr;
     }
     return mono_object_new(mono_domain_get(), klass);
@@ -105,12 +105,12 @@ void CSharpHandle::ProjectEnvironment::CompileScripts()
     // Comando para compilar o projeto .csproj usando o compilador C# (csc)
     if (this->config == NULL)
     {
-        std::cout << "config não inicializada" << std::endl;
+        std::cout << "configuration is not initialized" << std::endl;
         return;
     }
     else
     {
-        std::cout << "config inicializada" << this->config["project-name"] << std::endl;
+        std::cout << "configuration initialized with success -> " << this->config["project-name"] << std::endl;
     }
     std::string command;
     std::string projectName = config["project-name"];
@@ -125,15 +125,17 @@ void CSharpHandle::ProjectEnvironment::CompileScripts()
     std::cout << "Comando: " << command << std::endl;
 
     // Executa o comando de compilação do .csproj
+
+
     int result = std::system(command.c_str());
 
     if (result == 0)
     {
-        std::cout << "Compilação bem sucedida" << std::endl;
+        std::cout << "Compilation is done." << std::endl;
     }
     else
     {
-        std::cout << "Erro de compilação" << std::endl;
+        std::cout << "Error on compiling" << std::endl;
     }
 
     std::cout << std::endl;
@@ -179,7 +181,7 @@ void CSharpHandle::ProjectEnvironment::LoadClasses()
             std::string className(mono_class_get_name(klass));
             std::cout << std::endl;
             std::cout << std::endl;
-            std::cout << "Class: " << className << " -> add to runner" << std::endl;
+            std::cout << "Class: " << className << " -> added to behaviours" << std::endl;
             std::cout << std::endl;
             std::cout << std::endl;
         }
@@ -295,21 +297,21 @@ void CSharpHandle::ProjectEnvironment::LoadAssembles()
     {
         dllPath = this->projectFolder + "\\" + "bin\\Debug\\" + targetFolder + "\\" + projectName + ".dll";
     }
-    std::cout << "Carregando assembly " << dllPath << std::endl;
+    std::cout << "Loading assembly " << dllPath << std::endl;
     
 
     projectAssembly = mono_domain_assembly_open(this->projectDomain, dllPath.c_str());
 
     if (!projectAssembly)
     {
-        std::cout << "Inicialização falhou" << std::endl;
+        std::cout << "Initialization Failed" << std::endl;
         exit(1);
 
         return;
     }
     else
     {
-        std::cout << "Carregado com sucesso" << std::endl;
+        std::cout << "Loading complete" << std::endl;
     }
 
     std::string folder_path = "bin\\Release\\" + targetFolder;
@@ -317,6 +319,10 @@ void CSharpHandle::ProjectEnvironment::LoadAssembles()
     {
         folder_path = this->projectFolder +  "\\bin\\Debug\\" + targetFolder;
     }
+
+
+
+    std::cout << "Loading ThirdParty libraries..." << std::endl;
     for (const auto &entry : fs::directory_iterator(folder_path))
     {
         if (entry.path().extension() == ".dll")
@@ -325,7 +331,7 @@ void CSharpHandle::ProjectEnvironment::LoadAssembles()
             {
                 continue;
             }
-            std::cout << "Loading -> " << entry.path().string() << ";" << std::endl;
+            std::cout << "Loading library -> " << entry.path().string() << ";" << std::endl;
             try
             {
                 size_t lastDot = entry.path().filename().string().find_last_of(".");
@@ -341,7 +347,7 @@ void CSharpHandle::ProjectEnvironment::LoadAssembles()
             }
         }
     }
-    std::cout << "Carregando ThirdParty" << std::endl;
+
 }
 
 void CSharpHandle::ProjectEnvironment::SearchForScripts()
@@ -357,7 +363,6 @@ void CSharpHandle::generateScriptProject(std::string &projectFolder, std::string
     xml::xml_node<char> *propertyGroupNode = doc.allocate_node(xml::node_element, "PropertyGroup");
     xml::xml_node<char> *outputType = doc.allocate_node(xml::node_element, "OutputType");
     xml::xml_node<char> *nullable = doc.allocate_node(xml::node_element, "Nullable");
-    xml::xml_node<char> *outputPath = doc.allocate_node(xml::node_element, "OutputPath");
     xml::xml_node<char> *implicitUsings = doc.allocate_node(xml::node_element, "ImplicitUsings");
     xml::xml_node<char> *targetFramework = doc.allocate_node(xml::node_element, "TargetFramework");
 
@@ -367,9 +372,6 @@ void CSharpHandle::generateScriptProject(std::string &projectFolder, std::string
 
     char *targetFrameworkValue = doc.allocate_string("net6.0");
     targetFramework->value(targetFrameworkValue);
-
-    char *outputPathValue = doc.allocate_string("Build");
-    outputPath->value(outputPathValue);
 
     char *nullableValue = doc.allocate_string("enable");
     nullable->value(nullableValue);
@@ -381,7 +383,6 @@ void CSharpHandle::generateScriptProject(std::string &projectFolder, std::string
 
     propertyGroupNode->append_node(outputType);
     propertyGroupNode->append_node(targetFramework);
-    propertyGroupNode->append_node(outputPath);
     propertyGroupNode->append_node(nullable);
     propertyGroupNode->append_node(implicitUsings);
 

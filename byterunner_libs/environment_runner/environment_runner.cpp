@@ -164,7 +164,7 @@ void EnvironmentRunner::RunOnReceiveDataBehaviours(const evpp::TCPConnPtr& conn,
 
 void EnvironmentRunner::RunOnWriteDataBehaviours(const evpp::TCPConnPtr& conn, std::string data)
 {
-	std::string methodName = "OnReceiveData";
+	std::string methodName = "";
 
 
 	void* args[1];

@@ -5,7 +5,10 @@
 #include "../database_manager/database_manager.h"
 #include <evpp/tcp_server.h>
 #include <evpp/tcp_conn.h>
+#define GOOGLE_STRIP_LOG = 2
+#include <evpp/logging.h>
 #include <evpp/buffer.h>
+#include <glog/logging.h>
 #include <cppfs/FilePath.h>
 #include <unordered_set>
 #include <filesystem>
@@ -15,6 +18,7 @@ namespace fs = std::filesystem;
 
 Server::ServerRunner::ServerRunner()
 {
+   
     std::string currentPath = fs::current_path().string();
     this->projectFolder = currentPath;
     cppfs::FilePath configPath(projectFolder + "/runner-project.json");
@@ -26,11 +30,11 @@ Server::ServerRunner::ServerRunner()
     this->configs = configs;
     this->projectFolder = projectFolder;
     this->port = configs["port"];
-
+  
     std::cout << "Port set to " << this->port << std::endl;
     std::cout << "Folder Path : " << this->projectFolder << std::endl;
     config.close();
-
+   
     Server::connections = &connections;
 }
 
@@ -54,9 +58,10 @@ void Server::ServerRunner::StartHost()
     std::string addr = "127.0.0.1:4848";
     std::cout << "Address is : " << addr << std::endl;
     evpp::TCPServer server(&loop, addr, "Dev Runner Server", 4);
-
+   
     this->server = &server;
     this->loop = &loop;
+    google::SetStderrLogging(google::GLOG_FATAL); 
     this->server->SetConnectionCallback([this](const evpp::TCPConnPtr &conn)
                                         { this->OnConnection(conn); });
     this->server->SetMessageCallback([this](const evpp::TCPConnPtr &conn, evpp::Buffer *buf)

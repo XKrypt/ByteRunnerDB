@@ -7,6 +7,8 @@
 /CMakeTmp/
 /CMakeLists.txt.user
 /.vs
+/RunnerLibs/obj/
+/RunnerLibs/bin/
 /vcpkg_installed
 # Arquivos gerados pelo sistema operacional
 .DS_Store

@@ -8,9 +8,10 @@
 #include "CLI11.hpp"
 #include "byterunner_libs/runner_gui/runner_gui.h"
 #include "byterunner_libs/cli/cli.h"
+#include <glog/logging.h>
 int main(int argc, char** argv)
 {
-
+    google::InitGoogleLogging(argv[0]);
     std::cout << argv[0] << std::endl;
     CLI::App app{"ByteRunnerDB"};
 
