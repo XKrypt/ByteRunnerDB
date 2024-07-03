@@ -5,8 +5,12 @@ project(ByteRunnerDB)
 if(UNIX)
     set(CMAKE_TOOLCHAIN_FILE /home/fhayha/vcpkg/scripts/buildsystems/vcpkg.cmake)
 elseif(WIN32)
-    set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}\\scripts\\buildsystems\\vcpkg.cmake)
+    #set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}\\scripts\\buildsystems\\vcpkg.cmake)
     set(COPY_TARGET_DIR ${CMAKE_BINARY_DIR})
+
+    message("Cmake Toolchain----")
+    message(STATUS ${CMAKE_TOOLCHAIN_FILE})
+    message("--------")
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/finds_cmake")
@@ -25,7 +29,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
-    set(CMAKE_PREFIX_PATH "$ENV{VCPKG_ROOT}/packages/glfw3_x64-linux/share/glfw" ${CMAKE_PREFIX_PATH})
+    set(CMAKE_PREFIX_PATH "$ENV{VCPKG_ROOT}\\packages\\glfw3_x64-windows\\share\\glfw3" ${CMAKE_PREFIX_PATH})
     set(lib_directory $ENV{VCPKG_ROOT}\\packages\\glfw3_x64-windows\\lib)
     set(destination_directory ${CMAKE_CURRENT_BINARY_DIR})
 elseif(UNIX)
@@ -59,18 +63,25 @@ set(IMGUI_BACKEND_SOURCES
 
 message("Imgui source ${IMGUI_SOURCES}")
 message("Imgui backends ${IMGUI_BACKEND_SOURCES}")
+include_directories("imgui")
+if(UNIX)
+    set(glfw3_DIR /home/fhayha/vcpkg/packages/glfw3_x64-linux/share/glfw3)
+elseif(WIN32)
+    set(glfw3_DIR $ENV{VCPKG_ROOT}\\packages\\glfw3_x64-windows\\share\\glfw3)
+    set(cppfs_DIR $ENV{VCPKG_ROOT}\\packages\\cppfs_x64-windows\\share\\cppfs)
+    set(unofficial-evpp_DIR $ENV{VCPKG_ROOT}\\packages\\evpp_x64-windows\\share\\unofficial-evpp)
+endif()
+message("--GLFW3")
+message(${glfw3_DIR})
+message("--GLFW3")
+
 
 find_package(Mono REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 
-if(UNIX)
-    set(glfw3_DIR /home/fhayha/vcpkg/packages/glfw3_x64-linux/share/glfw3)
-elseif(WIN32)
-    set(glfw3_DIR $ENV{VCPKG_ROOT}\\packages\\glfw3_x64-windows\\share\\glfw3)
-endif()
 
-message(${glfw3_DIR})
+
 find_package(cppfs CONFIG REQUIRED)
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}")
